@@ -49,12 +49,12 @@ impl ToAddress for Config {
 #[async_trait::async_trait]
 impl storage::FromUrl for Config {
     async fn from_url(url: &url::Url) -> OpenRepositoryResult<Self> {
-        #[cfg(windows)]
-        // on windows, a path with a drive letter may get prefixed with another
-        // root forward slash, which is not appropriate for the platform
-        let path = std::path::PathBuf::from(url.path().trim_start_matches('/'));
-        #[cfg(unix)]
-        let path = std::path::PathBuf::from(url.path());
+        // Use to_file_path() to properly decode percent-encoded characters
+        // (e.g., %20 -> space) in the URL path. This also handles Windows
+        // drive letters correctly (e.g., file:///C:/path -> C:\path).
+        let path = url.to_file_path().map_err(|_| {
+            OpenRepositoryError::UnsupportedRepositoryType(format!("Invalid file URL: {}", url))
+        })?;
         Ok(Self { path })
     }
 }
