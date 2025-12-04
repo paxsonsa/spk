@@ -1,0 +1,35 @@
+# Copyright (c) Contributors to the SPK project.
+# SPDX-License-Identifier: Apache-2.0
+
+[package]
+name = "spenv-cli"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+license-file.workspace = true
+description = "Cascading SPFS Environment Manager CLI"
+
+[[bin]]
+name = "spenv"
+path = "src/main.rs"
+
+[dependencies]
+spenv = { workspace = true }
+spfs = { workspace = true }
+
+# CLI
+clap = { workspace = true, features = ["derive", "env"] }
+miette = { workspace = true, features = ["fancy"] }
+thiserror = { workspace = true }
+
+# Utilities
+tokio = { workspace = true, features = ["full"] }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+colored = { workspace = true }
+
+serde_yaml = { workspace = true }
+
+[dev-dependencies]
+rstest = { workspace = true }
+tempfile = { workspace = true }
