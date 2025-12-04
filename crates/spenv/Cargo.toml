@@ -1,0 +1,46 @@
+# Copyright (c) Contributors to the SPK project.
+# SPDX-License-Identifier: Apache-2.0
+
+[package]
+name = "spenv"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+license-file.workspace = true
+description = "Cascading SPFS Environment Manager Library"
+
+[dependencies]
+spfs = { workspace = true }
+
+# Serialization
+serde = { workspace = true, features = ["derive"] }
+serde_yaml = { workspace = true }
+
+# Error handling
+miette = { workspace = true, features = ["fancy"] }
+thiserror = { workspace = true }
+
+# Utilities
+tracing = { workspace = true }
+once_cell = { workspace = true }
+dunce = { workspace = true }
+dirs = { workspace = true }
+tempfile = { workspace = true }
+
+# Lock support
+sha2 = "0.10"
+chrono = { workspace = true }
+hostname = "0.3"
+
+# Optional SPK integration
+spk-solve = { workspace = true, optional = true }
+spk-exec = { workspace = true, optional = true }
+spk-storage = { workspace = true, optional = true }
+spk-schema = { workspace = true, optional = true }
+
+[features]
+default = []
+spk = ["spk-solve", "spk-exec", "spk-storage", "spk-schema"]
+
+[dev-dependencies]
+rstest = { workspace = true }

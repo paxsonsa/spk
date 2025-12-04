@@ -6,6 +6,8 @@ codegen-units = 1
 members = [
     "crates/is_default_derive_macro",
     "crates/progress_bar_derive_macro",
+    "crates/spenv",
+    "crates/spenv-cli",
     "crates/spfs",
     "crates/spfs-cli/*",
     "crates/spfs-encoding",
@@ -110,6 +112,8 @@ serde_yaml = "0.9.25"
 serial_test = "3.1"
 shellexpand = "3.1.0"
 spdx = "0.10"
+spenv = { path = "crates/spenv" }
+spenv-cli = { path = "crates/spenv-cli" }
 spfs = { path = "crates/spfs" }
 spfs-cli-common = { path = "crates/spfs-cli/common" }
 spfs-encoding = { path = "crates/spfs-encoding" }
