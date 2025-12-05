@@ -20,7 +20,7 @@ fn test_repo_selection_construction() {
         no_local_repo: false,
         local_repo_only: false,
     };
-    
+
     assert_eq!(selection.enable_repo, vec!["staging"]);
     assert_eq!(selection.disable_repo, vec!["origin"]);
 }

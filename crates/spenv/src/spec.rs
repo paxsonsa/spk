@@ -3,8 +3,9 @@
 
 //! Spec file parsing and data types for .spenv.yaml files.
 
-use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
+
+use serde::{Deserialize, Serialize};
 
 use crate::bind::BindMount;
 use crate::environment::EnvOp;

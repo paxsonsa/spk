@@ -9,9 +9,9 @@ use spfs::storage::RepositoryHandle;
 use spfs::tracking::TagSpec;
 use tempfile::TempDir;
 
+use crate::ComposedEnvironment;
 use crate::environment::{generate_startup_script, get_priority};
 use crate::repository::RepoSelection;
-use crate::ComposedEnvironment;
 
 /// Location in the runtime filesystem where startup scripts are sourced from.
 const STARTUP_FILES_LOCATION: &str = "/spfs/etc/spfs/startup.d";
@@ -56,9 +56,11 @@ pub async fn create_runtime(
             .source_files
             .first()
             .and_then(|p| p.parent())
-            .ok_or_else(|| crate::Error::ValidationFailed(
-                "No source files available to resolve bind mounts".to_string(),
-            ))?;
+            .ok_or_else(|| {
+                crate::Error::ValidationFailed(
+                    "No source files available to resolve bind mounts".to_string(),
+                )
+            })?;
 
         for bind in &composed.contents {
             let ll_bind = bind.to_live_layer_bind(spec_dir)?;
@@ -108,13 +110,12 @@ pub async fn create_runtime(
     #[cfg(feature = "spk")]
     if !composed.packages.is_empty() {
         // Resolve repositories according to CLI/env flags
-        let repo_list = crate::repository::resolve_spk_repositories(&options.repo_selection).await?;
-        
+        let repo_list =
+            crate::repository::resolve_spk_repositories(&options.repo_selection).await?;
+
         // Extract just the handles for the solver
-        let repos: Vec<std::sync::Arc<spk_storage::RepositoryHandle>> = repo_list
-            .into_iter()
-            .map(|(_, handle)| handle)
-            .collect();
+        let repos: Vec<std::sync::Arc<spk_storage::RepositoryHandle>> =
+            repo_list.into_iter().map(|(_, handle)| handle).collect();
 
         let pkg_opts = composed
             .package_options
@@ -122,8 +123,8 @@ pub async fn create_runtime(
             .cloned()
             .unwrap_or_default();
 
-        let solution = crate::package::resolve_packages(&composed.packages, &pkg_opts, &repos)
-            .await?;
+        let solution =
+            crate::package::resolve_packages(&composed.packages, &pkg_opts, &repos).await?;
 
         crate::package::apply_solution_to_runtime(&mut runtime, &solution).await?;
     }

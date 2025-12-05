@@ -1,8 +1,9 @@
 // Copyright (c) Contributors to the SPK project.
 // SPDX-License-Identifier: Apache-2.0
 
-use rstest::rstest;
 use std::path::PathBuf;
+
+use rstest::rstest;
 
 use super::*;
 use crate::bind::BindMount;

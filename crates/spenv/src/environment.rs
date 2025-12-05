@@ -80,10 +80,7 @@ impl EnvOp {
                 format!("export {}=\"{}\"", s.set, escape_value(&s.value))
             }
             EnvOp::Prepend(p) => {
-                let sep = p
-                    .separator
-                    .as_deref()
-                    .unwrap_or(EnvOp::default_separator());
+                let sep = p.separator.as_deref().unwrap_or(EnvOp::default_separator());
                 format!(
                     "export {}=\"{}{}${{{}}}\"",
                     p.prepend,
@@ -93,10 +90,7 @@ impl EnvOp {
                 )
             }
             EnvOp::Append(a) => {
-                let sep = a
-                    .separator
-                    .as_deref()
-                    .unwrap_or(EnvOp::default_separator());
+                let sep = a.separator.as_deref().unwrap_or(EnvOp::default_separator());
                 format!(
                     "export {}=\"${{{}}}{}{}\"",
                     a.append,

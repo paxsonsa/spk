@@ -3,9 +3,10 @@
 
 //! Verify that the current environment matches the lock file.
 
+use std::path::PathBuf;
+
 use clap::Args;
 use miette::Result;
-use std::path::PathBuf;
 
 /// Verify environment matches lock file
 #[derive(Debug, Args)]
@@ -25,7 +26,8 @@ pub struct CmdCheck {
 
 impl CmdCheck {
     pub async fn run(&mut self) -> Result<i32> {
-        let config = spfs::get_config().map_err(|e| miette::miette!("Failed to get config: {e}"))?;
+        let config =
+            spfs::get_config().map_err(|e| miette::miette!("Failed to get config: {e}"))?;
 
         // Discover specs and compose environment
         let options = spenv::DiscoveryOptions::default();

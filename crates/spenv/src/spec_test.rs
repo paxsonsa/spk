@@ -78,7 +78,9 @@ package_options:
 
     let spec = EnvSpec::from_yaml(yaml).expect("Should parse spec with packages");
     assert_eq!(spec.packages, vec!["python/3.11", "cmake/3.26"]);
-    let opts = spec.package_options.expect("package_options should be present");
+    let opts = spec
+        .package_options
+        .expect("package_options should be present");
     assert!(opts.binary_only);
     assert_eq!(opts.repositories, vec!["default"]);
     assert_eq!(opts.solver.as_deref(), Some("resolvo"));

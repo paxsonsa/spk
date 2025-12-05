@@ -3,8 +3,9 @@
 
 //! Error types for spenv operations.
 
-use miette::Diagnostic;
 use std::path::PathBuf;
+
+use miette::Diagnostic;
 use thiserror::Error;
 
 /// Convenience Result type with spenv Error.
@@ -74,10 +75,7 @@ pub enum Error {
 
     /// Unknown layer reference
     #[error("Unknown layer reference: {reference}")]
-    #[diagnostic(
-        code(spenv::unknown_layer),
-        help("{}", suggestion_message(similar))
-    )]
+    #[diagnostic(code(spenv::unknown_layer), help("{}", suggestion_message(similar)))]
     UnknownLayer {
         reference: String,
         similar: Vec<String>,

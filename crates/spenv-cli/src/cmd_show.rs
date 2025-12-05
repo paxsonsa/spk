@@ -3,10 +3,11 @@
 
 //! Implementation of the `spenv show` command.
 
+use std::path::PathBuf;
+
 use clap::Args;
 use colored::Colorize;
 use miette::Result;
-use std::path::PathBuf;
 
 /// Display resolved environment configuration
 #[derive(Debug, Args)]
@@ -160,12 +161,7 @@ impl CmdShow {
             for (i, op) in composed.environment.iter().enumerate() {
                 match op {
                     spenv::EnvOp::Set(s) => {
-                        println!(
-                            "  {}. {} = {}",
-                            i + 1,
-                            s.set.cyan(),
-                            s.value.green()
-                        );
+                        println!("  {}. {} = {}", i + 1, s.set.cyan(), s.value.green());
                     }
                     spenv::EnvOp::Prepend(p) => {
                         println!(
@@ -189,10 +185,7 @@ impl CmdShow {
                         println!("  # {}", c.comment.dimmed());
                     }
                     spenv::EnvOp::Priority(p) => {
-                        println!(
-                            "  [priority: {}]",
-                            p.priority.to_string().yellow()
-                        );
+                        println!("  [priority: {}]", p.priority.to_string().yellow());
                     }
                 }
             }
@@ -201,7 +194,11 @@ impl CmdShow {
         Ok(())
     }
 
-    fn show_yaml(&self, specs: &[spenv::EnvSpec], composed: &spenv::ComposedEnvironment) -> Result<()> {
+    fn show_yaml(
+        &self,
+        specs: &[spenv::EnvSpec],
+        composed: &spenv::ComposedEnvironment,
+    ) -> Result<()> {
         println!("# Discovered Files:");
         for spec in specs {
             if let Some(path) = &spec.source_path {
@@ -252,7 +249,11 @@ impl CmdShow {
         Ok(())
     }
 
-    fn show_json(&self, specs: &[spenv::EnvSpec], composed: &spenv::ComposedEnvironment) -> Result<()> {
+    fn show_json(
+        &self,
+        specs: &[spenv::EnvSpec],
+        composed: &spenv::ComposedEnvironment,
+    ) -> Result<()> {
         let files: Vec<String> = specs
             .iter()
             .filter_map(|s| s.source_path.as_ref().map(|p| p.display().to_string()))

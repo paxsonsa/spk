@@ -5,7 +5,6 @@
 
 #[cfg(feature = "spk")]
 use std::collections::HashSet;
-
 #[cfg(feature = "spk")]
 use std::sync::Arc;
 
@@ -67,13 +66,17 @@ pub async fn resolve_spk_repositories(
             Ok(handle) => {
                 repos.push((name, Arc::new(handle.into())));
             }
-            Err(spk_storage::Error::SPFS(spfs::Error::UnknownRemoteName(_))) if name == "origin" => {
+            Err(spk_storage::Error::SPFS(spfs::Error::UnknownRemoteName(_)))
+                if name == "origin" =>
+            {
                 // Default origin missing is allowed
                 continue;
             }
-            Err(err) => return Err(Error::ValidationFailed(format!(
-                "Failed to open repository {name}: {err}"
-            ))),
+            Err(err) => {
+                return Err(Error::ValidationFailed(format!(
+                    "Failed to open repository {name}: {err}"
+                )));
+            }
         }
     }
 

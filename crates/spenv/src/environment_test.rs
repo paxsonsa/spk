@@ -1,7 +1,16 @@
 // Copyright (c) Contributors to the SPK project.
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::environment::{generate_startup_script, get_priority, EnvOp, AppendEnv, CommentEnv, PrependEnv, PriorityEnv, SetEnv};
+use crate::environment::{
+    AppendEnv,
+    CommentEnv,
+    EnvOp,
+    PrependEnv,
+    PriorityEnv,
+    SetEnv,
+    generate_startup_script,
+    get_priority,
+};
 
 #[test]
 fn test_generate_startup_script_basic() {

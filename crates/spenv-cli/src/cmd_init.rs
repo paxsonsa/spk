@@ -3,9 +3,10 @@
 
 //! Implementation of the `spenv init` command.
 
+use std::path::PathBuf;
+
 use clap::Args;
 use miette::Result;
-use std::path::PathBuf;
 
 /// Create a new .spenv.yaml file
 #[derive(Debug, Args)]

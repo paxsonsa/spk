@@ -5,9 +5,9 @@
 
 use std::path::PathBuf;
 
+use crate::EnvSpec;
 use crate::bind::BindMount;
 use crate::environment::EnvOp;
-use crate::EnvSpec;
 
 #[cfg(test)]
 #[path = "./compose_test.rs"]
@@ -68,9 +68,7 @@ pub fn compose_specs(specs: &[EnvSpec]) -> ComposedEnvironment {
             .extend(spec.environment.iter().cloned());
 
         // Bind mounts: append in order
-        composed
-            .contents
-            .extend(spec.contents.iter().cloned());
+        composed.contents.extend(spec.contents.iter().cloned());
 
         // Packages: append in order
         composed.packages.extend(spec.packages.iter().cloned());

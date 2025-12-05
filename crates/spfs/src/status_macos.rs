@@ -133,7 +133,7 @@ pub async fn initialize_runtime(rt: &mut runtime::Runtime) -> Result<RenderSumma
     rt.config.sh_startup_file = runtime_root.join("startup.sh");
     rt.config.csh_startup_file = runtime_root.join(".cshrc");
     rt.config.runtime_dir = Some(runtime_root);
-    
+
     rt.save_state_to_storage().await?;
 
     let configurator = env::RuntimeConfigurator::default();

@@ -3,10 +3,11 @@
 
 //! Discovery algorithm for finding and loading .spenv.yaml files.
 
-use once_cell::sync::Lazy;
 use std::collections::HashSet;
 use std::path::{Path, PathBuf};
 use std::sync::Mutex;
+
+use once_cell::sync::Lazy;
 
 #[cfg(test)]
 #[path = "./discovery_test.rs"]
@@ -15,8 +16,7 @@ mod discovery_test;
 use crate::{EnvSpec, SPENV_FILENAME, SPENV_LOCAL_FILENAME};
 
 /// Global cache to prevent circular includes.
-static SEEN_SPEC_FILES: Lazy<Mutex<HashSet<PathBuf>>> =
-    Lazy::new(|| Mutex::new(HashSet::new()));
+static SEEN_SPEC_FILES: Lazy<Mutex<HashSet<PathBuf>>> = Lazy::new(|| Mutex::new(HashSet::new()));
 
 /// Clear the circular include cache (used in tests).
 pub fn clear_seen_spec_cache() {
@@ -88,9 +88,7 @@ fn resolve_start_path(start_path: &Path) -> PathBuf {
     } else {
         match std::env::var("PWD").ok() {
             Some(pwd) => PathBuf::from(pwd).join(start_path),
-            None => std::env::current_dir()
-                .unwrap_or_default()
-                .join(start_path),
+            None => std::env::current_dir().unwrap_or_default().join(start_path),
         }
     }
 }

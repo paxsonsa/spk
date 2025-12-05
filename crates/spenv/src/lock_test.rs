@@ -7,7 +7,7 @@ use rstest::rstest;
 use tempfile::TempDir;
 
 use crate::lock::{LockApiVersion, LockChangeKind, LockFile, ResolvedLayer, SourceFile};
-use crate::{compose_specs, EnvSpec};
+use crate::{EnvSpec, compose_specs};
 
 #[rstest]
 fn test_basic_lockfile_structure() {
@@ -41,11 +41,7 @@ fn test_generate_and_verify_lock_round_trip_no_changes() {
     // Create a simple spec file on disk
     let tmp = TempDir::new().unwrap();
     let spec_path = tmp.path().join(".spenv.yaml");
-    std::fs::write(
-        &spec_path,
-        "api: spenv/v0\nlayers:\n  - test-layer\n",
-    )
-    .unwrap();
+    std::fs::write(&spec_path, "api: spenv/v0\nlayers:\n  - test-layer\n").unwrap();
 
     let spec = EnvSpec::load(&spec_path).unwrap();
     let specs = vec![spec];

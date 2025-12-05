@@ -5,15 +5,24 @@
 
 #![cfg(feature = "spk")]
 
-use crate::spec::PackageOptions;
-use crate::Error;
 use spk_exec::setup_runtime_with_reporter;
-use spk_solve::{DecisionFormatterBuilder, Request as SolveRequest, SolverExt, SolverImpl, SolverMut, ResolvoSolver, StepSolver};
-use spk_solve::solution::Solution;
-use spk_solve::{PkgRequest, RequestedBy};
-use spk_storage as storage;
 use spk_schema::ident::parse_ident;
+use spk_solve::solution::Solution;
+use spk_solve::{
+    DecisionFormatterBuilder,
+    PkgRequest,
+    Request as SolveRequest,
+    RequestedBy,
+    ResolvoSolver,
+    SolverExt,
+    SolverImpl,
+    SolverMut,
+    StepSolver,
+};
+use spk_storage as storage;
 
+use crate::Error;
+use crate::spec::PackageOptions;
 
 /// Resolve package requests into a SPK solution using the configured solver
 /// and repositories.
@@ -50,8 +59,9 @@ pub async fn resolve_packages(
 
     // Parse package requests.
     for pkg in packages {
-        let ident = parse_ident(pkg)
-            .map_err(|e| Error::ValidationFailed(format!("Invalid package request '{}': {}", pkg, e)))?;
+        let ident = parse_ident(pkg).map_err(|e| {
+            Error::ValidationFailed(format!("Invalid package request '{}': {}", pkg, e))
+        })?;
         let pkg_req = PkgRequest::from_ident(ident, RequestedBy::DoesNotMatter);
         solver.add_request(SolveRequest::Pkg(pkg_req));
     }
@@ -71,7 +81,11 @@ pub async fn apply_solution_to_runtime(
     runtime: &mut spfs::runtime::Runtime,
     solution: &Solution,
 ) -> crate::Result<()> {
-    setup_runtime_with_reporter(runtime, solution, spfs::sync::reporter::SyncReporters::console)
-        .await
-        .map_err(|e| Error::ValidationFailed(format!("Failed to apply SPK solution: {}", e)))
+    setup_runtime_with_reporter(
+        runtime,
+        solution,
+        spfs::sync::reporter::SyncReporters::console,
+    )
+    .await
+    .map_err(|e| Error::ValidationFailed(format!("Failed to apply SPK solution: {}", e)))
 }

@@ -40,20 +40,20 @@ pub mod discovery;
 pub mod environment;
 pub mod error;
 pub mod lock;
-pub mod runtime;
 #[cfg(feature = "spk")]
 pub mod package;
 pub mod repository;
+pub mod runtime;
 pub mod spec;
 
 pub use bind::BindMount;
-pub use compose::{compose_specs, ComposedEnvironment};
-pub use discovery::{discover_specs, DiscoveryOptions};
-pub use environment::{generate_startup_script, EnvOp};
+pub use compose::{ComposedEnvironment, compose_specs};
+pub use discovery::{DiscoveryOptions, discover_specs};
+pub use environment::{EnvOp, generate_startup_script};
 pub use error::{Error, Result};
-pub use lock::{generate_lock, verify_lock, LockChange, LockChangeKind, LockFile};
+pub use lock::{LockChange, LockChangeKind, LockFile, generate_lock, verify_lock};
 pub use repository::RepoSelection;
-pub use runtime::{create_runtime, RuntimeOptions};
+pub use runtime::{RuntimeOptions, create_runtime};
 pub use spec::{ApiVersion, EnvSpec, PackageOptions};
 
 /// Well-known filename for environment specs.

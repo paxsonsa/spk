@@ -246,7 +246,11 @@ impl VfsService for Arc<Service> {
         })?;
 
         let was_mounted = router.unmount(req.root_pid);
-        tracing::info!(root_pid = req.root_pid, was_mounted, "Unmounted environment");
+        tracing::info!(
+            root_pid = req.root_pid,
+            was_mounted,
+            "Unmounted environment"
+        );
 
         Ok(Response::new(UnmountResponse { was_mounted }))
     }

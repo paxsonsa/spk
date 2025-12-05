@@ -3,9 +3,10 @@
 
 //! Generate or update lock files for spenv environments.
 
+use std::path::PathBuf;
+
 use clap::Args;
 use miette::Result;
-use std::path::PathBuf;
 
 /// Generate or update lock file
 #[derive(Debug, Args)]
@@ -33,7 +34,8 @@ pub struct CmdLock {
 
 impl CmdLock {
     pub async fn run(&mut self) -> Result<i32> {
-        let config = spfs::get_config().map_err(|e| miette::miette!("Failed to get config: {e}"))?;
+        let config =
+            spfs::get_config().map_err(|e| miette::miette!("Failed to get config: {e}"))?;
 
         // Discover specs using default discovery options from the given path.
         let options = spenv::DiscoveryOptions::default();

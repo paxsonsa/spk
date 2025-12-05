@@ -3,8 +3,9 @@
 
 //! Bind mount specifications for `contents:` in .spenv.yaml.
 
-use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
+
+use serde::{Deserialize, Serialize};
 
 use crate::Error;
 

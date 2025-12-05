@@ -3,10 +3,11 @@
 
 //! Implementation of the `spenv load` command.
 
+use std::path::PathBuf;
+
 use clap::Args;
 use colored::Colorize;
 use miette::Result;
-use std::path::PathBuf;
 
 /// Enter environment from current directory
 #[derive(Debug, Args)]
@@ -55,7 +56,8 @@ pub struct CmdLoad {
 impl CmdLoad {
     pub async fn run(&mut self) -> Result<i32> {
         // Get SPFS config
-        let config = spfs::get_config().map_err(|e| miette::miette!("Failed to get config: {}", e))?;
+        let config =
+            spfs::get_config().map_err(|e| miette::miette!("Failed to get config: {}", e))?;
 
         // Parse environment variables
         let env_includes = std::env::var("SPENV_INCLUDE")
@@ -138,8 +140,9 @@ impl CmdLoad {
         };
 
         // Build and exec into spfs-enter
-        let cmd = spfs::build_command_for_runtime(&runtime, &command, args.iter().map(|s| s.as_str()))
-            .map_err(|e| miette::miette!("Failed to build command: {}", e))?;
+        let cmd =
+            spfs::build_command_for_runtime(&runtime, &command, args.iter().map(|s| s.as_str()))
+                .map_err(|e| miette::miette!("Failed to build command: {}", e))?;
 
         tracing::info!("Entering runtime: {}", runtime.name());
 

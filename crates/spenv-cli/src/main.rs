@@ -97,9 +97,7 @@ impl Opt {
             (false, _) => tracing::Level::TRACE,
         };
 
-        tracing_subscriber::fmt()
-            .with_max_level(log_level)
-            .init();
+        tracing_subscriber::fmt().with_max_level(log_level).init();
 
         // Dispatch to command
         match self.cmd {
