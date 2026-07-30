@@ -16,6 +16,8 @@ related:
 
 > **Status: design fiction.** This guide is written as if `spfs env` v1 has shipped, because walking real personas through real workflows is the fastest way to find the holes. Everything under `spfs env ...` is **proposed**. Everything under plain `spfs ...` (run, info, diff, log, commit, tag, pull, push) **exists today**. The architecture behind this guide is in [the design doc](./2026-07-29-ilm-env-hierarchy-spec.md); where this guide hits a problem, it says so inline in a `⚠` block and states the answer the design gives (or fails to give).
 
+> ⚠ **STRESS-TESTED — many concrete commands here are WRONG. Read [`2026-07-30-spfs-env-stress-test-findings.md`](./2026-07-30-spfs-env-stress-test-findings.md).** The two flagship workflows both fail as written: §5's `promote` produces a raw layer with no package/ABI metadata, so a released lib's numpy pin never enters the solve and segfaults on the farm (C8); §8's farm submit writes objects to the *local* repo while workers sync from *origin* — every worker gets `UnknownObject` (no push step). §3.5's GC command uses non-existent, mutually-exclusive flags (C9/D10). §5.2's unversioned `promote --dest` contradicts §6.1. §4's config store rests on a read path the code inverts (C1). The core model holds; the specific verbs and recipes do not.
+
 ---
 
 ## 1. The mental model, in five minutes

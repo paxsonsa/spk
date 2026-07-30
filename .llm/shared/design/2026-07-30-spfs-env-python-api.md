@@ -13,6 +13,8 @@ related:
 
 # The spfs env tool suite: config store and Python API
 
+> ⚠ **STRESS-TESTED — the read path this is built on is inverted, and several write claims are WRONG. Read [`2026-07-30-spfs-env-stress-test-findings.md`](./2026-07-30-spfs-env-stress-test-findings.md).** The "blessed read path" premise (`all_annotations()` = highest-wins) is only true for a flat stack; with nested platforms (which the design mandates) traversal is BFS and the deepest-nested annotation wins, inverting precedence — so the reader must be a custom top-down stack walk, not either built-in (C1/D11). Confirmed wrong: `cfg.set()` is O(n) per write with unbounded growth, not "cheap" (D2); `batch()` is not atomic and an empty batch hard-errors (§3 sub-findings); reads silently return `default` on storage faults (D3); tombstones leak into published platforms via `commit_platform` and resurface stale values (D5); `env.digest`/`env.runtime_stack_digest` are unimplementable/unstable as specified (D6). "Nothing upstream tests duplicate keys" is false (`storage_test.rs:110-124`). The suite *layering* (Rust core / CLI / subprocess-then-PyO3) is sound; the semantics need the findings applied.
+
 Design for the tool suite around hierarchical environments, centered on the piece programs touch most: reading and writing configuration (annotations) from inside a runtime, from Python.
 
 ## TL;DR
