@@ -122,6 +122,44 @@ Probe **every** candidate level in parallel, not "walk up until a miss." Gaps ar
 
 Five to eight parallel resolves against gRPC is well under the cost of the filesystem crawl it replaces.
 
+## Context and templated candidates
+
+Path derivation is a special case of a more general mechanism: resolution is a function of a **context**, a small map of validated variables, and the path is one *provider* of context among several. This is what lets environment variables and templates drive resolution without becoming a second mechanism.
+
+```toml
+# /etc/spfs-env/config.toml
+[context.vars.show]
+from = ["flag", "env:SHOW", "path"]   # precedence: explicit flag > shell env > extracted from cwd
+pattern = "[a-z0-9_-]+"               # strict; substituted values rejecting anything else
+
+[context.vars.role]
+from = ["flag", "env:ROLE"]           # a dimension the path cannot express
+required = false
+
+[context.path]
+patterns = ["/show/{show}/{seq}/{shot}", "/show/{show}"]   # inverse templates: extract vars from cwd
+
+[probe]
+candidates = [
+  "ilm/base",
+  "ilm/show/{show}",
+  "ilm/show/{show}/{seq}",
+  "ilm/show/{show}/{seq}/{shot}",
+  "ilm/show/{show}/role/{role}",
+]
+```
+
+A candidate whose variables cannot all be resolved is skipped, exactly like a tag-probe miss — no `ROLE` set, no role candidate. This answers the long-open "same directory, different environment per task" question: `--var role=lighting` or `$ROLE` selects a per-role candidate the path could never express.
+
+Rules that keep it safe and explainable:
+
+- **Declared variables only.** The resolver reads exactly the vars named in `context.vars`, never arbitrary environment. A template cannot reference an undeclared variable.
+- **Strict value validation, security-relevant.** Substituted values land in tag names, and the tag charset *allows dots* — `SHOW=../../user/mallory` passes a naive charset check and produces a namespace-escaping tag path. Do not rely on downstream normalization: validate each substituted value against a conservative pattern (no dots unless a var opts in), rejecting at substitution time with the offending value named.
+- **Substitution only, no logic.** `{var}` interpolation plus `required`/defaults. Conditionals and loops turn config into a program and `--explain` into a debugger. Precedent and cautionary tale in-workspace: spk spec files support full Tera/Jinja2 templating with `env: {}` exposed (`docs/use/create/template.md`, `crates/spk-schema/crates/tera/`), rendered opaquely at file-read time — fine for build-time specs, poison for explainable resolution. Tera is the escalation path if real pressure mounts, with that cost named.
+- **Lifecycle split.** Resolution-time substitution is allowed in the candidate list and slot 3/4 files. Published tag content is **static** — CI may template at publish time (git-side, free), but a published platform never contains an unexpanded variable.
+- **Context is identity.** Substituted values join the resolution cache key; the lock key becomes `(canonical path, context hash)`; invocation annotations record each variable, its value, and its source (`show=abc from env:SHOW`); `status` and `--explain` print the context block first, because a stale `$SHOW` from a shell opened Tuesday is the single most classic facility support ticket.
+- **`--pure`** resolves from flags and path extraction only, ignoring env providers — "show me the canonical answer for this directory."
+
 ## File format
 
 ```yaml
@@ -464,6 +502,10 @@ If it is mostly environment variables, Rule 3 is the hard part and should be des
 **Decision 6: Is there an existing source of truth for show environment configuration?**
 
 If shows are already configured in Qi, a git repository, or a database, then tags are a published artifact of that and this format is largely a compilation target. That is a materially easier problem, and it moves the security question from "who can write to a show directory" to "who can run the publisher."
+
+**Decision 7: When context providers disagree, which wins and how loudly?**
+
+`env:SHOW=def` in a stale shell versus `show=abc` extracted from the cwd. The declared precedence (`flag > env > path`) says env wins, which matches how facility tooling behaves today but silently honors stale shells. Options: warn-and-env-wins (default proposed), path-wins, or hard error. The conflict is mechanically detectable, so this is pure policy — but it determines the single most common support interaction, so it deserves an explicit call and probably a per-facility config knob.
 
 ## Build order
 
